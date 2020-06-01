@@ -1,4 +1,5 @@
-const fs = require('fs/promises');
+const fsPromise = require('fs/promises');
+const fs = require('fs');
 const path = require('path');
 
 const R = require('ramda');
@@ -34,7 +35,7 @@ async function getTagsHistogram(rootDir) {
 
 
 async function getLinksFromFile(filePath) {
-	const content = (await fs.readFile(filePath)).toString();
+	const content = (await fsPromise.readFile(filePath)).toString();
 	const links = content.matchAll(/\[\[(.*?)\]\]/ig);
 	return links;
 }
@@ -47,19 +48,30 @@ async function getLinks(rootDir) {
 		const matches = Array.from(
 			await getLinksFromFile(filePath)
 		);
+		const _links = matches.map(
+			(match) => {
+				const linkedFile = `${match[1]}.md`;
+				const p = path.join(
+					path.dirname(file),
+					linkedFile
+				);
+				// in the end all paths are relative to the root dir
+				return path.normalize(p);
+			}
+		);
+		const links = [];
+		const brokenLinks = [];
+		_links.forEach((l) => {
+			if (files.includes(l)) {
+				links.push(l);
+			} else {
+				brokenLinks.push(l);
+			}
+		});
 		return {
 			file,
-			links: (matches).map(
-				(match) => {
-					const linkedFile = `${match[1]}.md`;
-					const p = path.join(
-						path.dirname(file),
-						linkedFile
-					);
-					// in the end all paths are relative to the root dir
-					return path.normalize(p);
-				}
-			),
+			links,
+			brokenLinks,
 		};
 	})(files);
 	return Promise.all(promises);
@@ -69,19 +81,19 @@ async function getLinks(rootDir) {
 function addBacklinks(linkItems) {
 	// map file name to data
 	const nameToData = {};
-	linkItems.forEach(({ file, links }) => {
-		nameToData[file] = { 
-			links,
-			backlinks: [], 
+	linkItems.forEach((item) => {
+		nameToData[item.file] = { 
+			...item,
+			backLinks: [], 
 		};
 	});
-	// add backlinks
+	// add backLinks
 	linkItems.forEach(({ file, links }) => {
 		linkItems.forEach((other) => {
 			if (file === other.file) { return; }
 			if (other.links.includes(file)) {
 				if (!links.includes(other.file)) {
-					nameToData[file].backlinks.push(other.file);					
+					nameToData[file].backLinks.push(other.file);					
 				}
 			}
 		});
@@ -89,9 +101,7 @@ function addBacklinks(linkItems) {
 	// convert back to list
 	return R.pipe(
 		R.toPairs,
-		R.map(([file, data]) => {
-			return { ...data, file };
-		})
+		R.map(([file, data]) => data)
 	)(nameToData);
 }
 
