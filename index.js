@@ -56,6 +56,7 @@ async function getLinks(rootDir) {
 						path.dirname(file),
 						linkedFile
 					);
+					// in the end all paths are relative to the root dir
 					return path.normalize(p);
 				}
 			),
@@ -98,8 +99,10 @@ function addBacklinks(linkItems) {
 async function main() {
 	const args = R.drop(2, process.argv);
 	const rootDir = args[0];
+
 	// getTagsHistogram(rootDir).then(console.log);
-	const links = await getLinks(rootDir);
-	console.log(addBacklinks(links));
+	let linkItems = await getLinks(rootDir);
+	linkItems = addBacklinks(linkItems);
+	console.log(linkItems);
 }
 main();
