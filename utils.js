@@ -1,5 +1,8 @@
 const { exec } = require('child_process');
+const path = require('path');
+
 const R = require('ramda');
+const glob = require('glob');
 
 
 const asyncExec = 
@@ -32,4 +35,21 @@ module.exports.getExecStdout = (command) => {
 				.filter(R.identity);
 			return lines;
 		});
+};
+
+
+const getFiles = 
+module.exports.getFiles = (rootDir) => {
+	return new Promise((resolve, reject) => {
+		glob(
+			path.join('**', '*.md'),
+			{ cwd: rootDir },
+			(err, matches) => {
+				if (err) {
+					return reject(err);
+				}
+				resolve(matches);
+			}
+		)
+	});
 };

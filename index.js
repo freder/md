@@ -1,9 +1,12 @@
+const fs = require('fs/promises');
+const path = require('path');
+
 const R = require('ramda');
 
 const utils = require('./utils.js');
 
 
-async function getTags(rootDir) {
+async function getTagsHistogram(rootDir) {
 	const command = [
 		'ag',
 			'--only-matching',
@@ -30,9 +33,36 @@ async function getTags(rootDir) {
 }
 
 
+async function getLinksFromFile(filePath) {
+	const content = (await fs.readFile(filePath)).toString();
+	const links = content.matchAll(/\[\[(.*?)\]\]/ig);
+	return links;
+}
+
+
+async function getLinks(rootDir) {
+	const files = await utils.getFiles(rootDir);
+	const promises = R.map(async (f) => {
+		const filePath = path.join(rootDir, f);
+		const links = Array.from(
+			await getLinksFromFile(filePath)
+		);
+		return {
+			file: f,
+			links: R.pipe(
+				R.map(R.nth(1)), // extract name
+				R.map((n) => `${n}.md`)
+			)(links),
+		};
+	})(files);
+	return Promise.all(promises);
+}
+
+
 function main() {
 	const args = R.drop(2, process.argv);
 	const rootDir = args[0];
-	getTags(rootDir).then(console.log);
+	// getTagsHistogram(rootDir).then(console.log);
+	getLinks(rootDir).then(console.log);
 }
 main();
