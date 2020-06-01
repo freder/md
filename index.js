@@ -42,27 +42,64 @@ async function getLinksFromFile(filePath) {
 
 async function getLinks(rootDir) {
 	const files = await utils.getFiles(rootDir);
-	const promises = R.map(async (f) => {
-		const filePath = path.join(rootDir, f);
-		const links = Array.from(
+	const promises = R.map(async (file) => {
+		const filePath = path.join(rootDir, file);
+		const matches = Array.from(
 			await getLinksFromFile(filePath)
 		);
 		return {
-			file: f,
-			links: R.pipe(
-				R.map(R.nth(1)), // extract name
-				R.map((n) => `${n}.md`)
-			)(links),
+			file,
+			links: (matches).map(
+				(match) => {
+					const linkedFile = `${match[1]}.md`;
+					const p = path.join(
+						path.dirname(file),
+						linkedFile
+					);
+					return path.normalize(p);
+				}
+			),
 		};
 	})(files);
 	return Promise.all(promises);
 }
 
 
-function main() {
+function addBacklinks(linkItems) {
+	// map file name to data
+	const nameToData = {};
+	linkItems.forEach(({ file, links }) => {
+		nameToData[file] = { 
+			links,
+			backlinks: [], 
+		};
+	});
+	// add backlinks
+	linkItems.forEach(({ file, links }) => {
+		linkItems.forEach((other) => {
+			if (file === other.file) { return; }
+			if (other.links.includes(file)) {
+				if (!links.includes(other.file)) {
+					nameToData[file].backlinks.push(other.file);					
+				}
+			}
+		});
+	});
+	// convert back to list
+	return R.pipe(
+		R.toPairs,
+		R.map(([file, data]) => {
+			return { ...data, file };
+		})
+	)(nameToData);
+}
+
+
+async function main() {
 	const args = R.drop(2, process.argv);
 	const rootDir = args[0];
 	// getTagsHistogram(rootDir).then(console.log);
-	getLinks(rootDir).then(console.log);
+	const links = await getLinks(rootDir);
+	console.log(addBacklinks(links));
 }
 main();
