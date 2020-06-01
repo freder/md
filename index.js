@@ -1,36 +1,6 @@
-const { exec } = require('child_process');
 const R = require('ramda');
 
-
-function asyncExec(command) {
-	return new Promise((resolve, reject) => {
-		exec(
-			command,
-			{},
-			(err, stdout, stderr) => {
-				if (err) {
-					console.error(err);
-					return reject(err);
-				}
-				resolve({ stdout, stderr });
-			}
-		);
-	});
-}
-
-
-function getExecStdout(command) {
-	return asyncExec(command)
-		.then(({ stdout, stderr }) => {
-			const lines = stdout.split(/[\r\n]/g)
-				.map((line) => {
-					const l = `${line}`.trim();
-					return (!l.length) ? null : l;
-				})
-				.filter(R.identity);
-			return lines;
-		});
-}
+const utils = require('./utils.js');
 
 
 async function getTags(rootDir) {
@@ -55,7 +25,7 @@ async function getTags(rootDir) {
 		};
 	};
 
-	return getExecStdout(command)
+	return utils.getExecStdout(command)
 		.then((lines) => lines.map(parseLine));
 }
 
