@@ -1,0 +1,75 @@
+{
+	"nodes": [
+		{
+			"id": "conclusion.md",
+			"isMissing": true
+		},
+		{
+			"id": "dolores.md",
+			"isMissing": true
+		},
+		{
+			"id": "tempore.md",
+			"isMissing": true
+		},
+		{
+			"file": "index.md",
+			"links": [
+				"introduction.md",
+				"nested/chapter-1.md"
+			],
+			"brokenLinks": [
+				"conclusion.md"
+			],
+			"backLinks": [],
+			"id": "index.md"
+		},
+		{
+			"file": "introduction.md",
+			"links": [],
+			"brokenLinks": [
+				"dolores.md",
+				"tempore.md"
+			],
+			"backLinks": [
+				"index.md"
+			],
+			"id": "introduction.md"
+		},
+		{
+			"file": "nested/chapter-1.md",
+			"links": [
+				"index.md"
+			],
+			"brokenLinks": [],
+			"backLinks": [],
+			"id": "nested/chapter-1.md"
+		}
+	],
+	"links": [
+		{
+			"source": "index.md",
+			"target": "introduction.md"
+		},
+		{
+			"source": "index.md",
+			"target": "nested/chapter-1.md"
+		},
+		{
+			"source": "index.md",
+			"target": "conclusion.md"
+		},
+		{
+			"source": "introduction.md",
+			"target": "dolores.md"
+		},
+		{
+			"source": "introduction.md",
+			"target": "tempore.md"
+		},
+		{
+			"source": "nested/chapter-1.md",
+			"target": "index.md"
+		}
+	]
+}

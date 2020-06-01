@@ -1,4 +1,10 @@
-# mission
+```
+node index.js ./test-data
+serve -o ./web
+```
+
+
+## mission
 
 - building composable tools for working with markdown files
 - enabling more advanced workflows, while dealing with flat files only

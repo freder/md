@@ -114,5 +114,34 @@ async function main() {
 	let linkItems = await getLinks(rootDir);
 	linkItems = addBacklinks(linkItems);
 	console.log(linkItems);
+
+	// prep visualization data
+	const links = [];
+	const missing = R.pipe(
+		R.map(R.prop('brokenLinks')),
+		R.unnest,
+		R.uniq,
+		R.map((id) => ({ id, isMissing: true })),
+	)(linkItems);
+	const nodes = [...missing]
+	linkItems.forEach((item) => {
+		nodes.push({
+			...item,
+			id: item.file,
+		});
+		[
+			...item.links,
+			...item.brokenLinks,
+		].forEach((l) => {
+			links.push({
+				source: item.file,
+				target: l,
+			});
+		});
+	});
+	fs.writeFileSync(
+		'./web/data.json', 
+		JSON.stringify({ nodes, links }, null, '\t')
+	);
 }
 main();
