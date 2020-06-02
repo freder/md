@@ -50,6 +50,14 @@
 			"brokenLinks": [],
 			"backLinks": [],
 			"id": "nested/chapter-1.md"
+		},
+		{
+			"file": "orphan.md",
+			"frontmatter": {},
+			"links": [],
+			"brokenLinks": [],
+			"backLinks": [],
+			"id": "orphan.md"
 		}
 	],
 	"links": [
