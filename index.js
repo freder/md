@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const R = require('ramda');
+const matter = require('gray-matter');
 
 const utils = require('./utils.js');
 
@@ -65,6 +66,11 @@ function getLinksFromFile(files, file, fileContent) {
 }
 
 
+function getFrontmatterFromFile(fileContent) {
+	return matter(fileContent).data;
+}
+
+
 async function getLinks(rootDir, files) {
 	const promises = files.map(async (file) => {
 		const filePath = path.join(rootDir, file);
@@ -72,10 +78,12 @@ async function getLinks(rootDir, files) {
 			await fsPromise.readFile(filePath)
 		).toString();
 
+		const frontmatter = getFrontmatterFromFile(fileContent);
 		const { links, brokenLinks } = getLinksFromFile(files, file, fileContent);
 
 		return {
 			file,
+			frontmatter,
 			links,
 			brokenLinks,
 		};

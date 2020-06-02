@@ -14,6 +14,10 @@
 		},
 		{
 			"file": "index.md",
+			"frontmatter": {
+				"public": true,
+				"tags": "test, asdf"
+			},
 			"links": [
 				"introduction.md",
 				"nested/chapter-1.md"
@@ -26,6 +30,7 @@
 		},
 		{
 			"file": "introduction.md",
+			"frontmatter": {},
 			"links": [],
 			"brokenLinks": [
 				"dolores.md",
@@ -38,6 +43,7 @@
 		},
 		{
 			"file": "nested/chapter-1.md",
+			"frontmatter": {},
 			"links": [
 				"index.md"
 			],

@@ -84,7 +84,10 @@ fetch('data.json')
 		const labels = node.append('text')
 			.text((d) => d.id)
 			.attr('x', 6)
-			.attr('y', 3);
+			.attr('y', 3)
+			.attr('fill', (d) => {
+				return (d.frontmatter && d.frontmatter.public) ? 'black' : 'lightgrey';
+			});
 
 		simulation.on('tick', () => {
 			link
