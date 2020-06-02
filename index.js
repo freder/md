@@ -34,46 +34,52 @@ async function getTagsHistogram(rootDir) {
 }
 
 
-async function getLinksFromFile(filePath) {
-	const content = (await fsPromise.readFile(filePath)).toString();
-	const links = content.matchAll(/\[\[(.*?)\]\]/ig);
-	return links;
+function getLinksFromFile(files, file, fileContent) {
+	const matches = Array.from(
+		fileContent.matchAll(/\[\[(.*?)\]\]/ig)
+	);
+	const _links = matches.map(
+		(match) => {
+			const linkedFile = `${match[1]}.md`;
+			const p = path.join(
+				path.dirname(file),
+				linkedFile
+			);
+			// in the end all paths are relative to the root dir
+			return path.normalize(p);
+		}
+	);
+	const links = [];
+	const brokenLinks = [];
+	_links.forEach((l) => {
+		if (files.includes(l)) {
+			links.push(l);
+		} else {
+			brokenLinks.push(l);
+		}
+	});
+	return {
+		links,
+		brokenLinks,
+	};
 }
 
 
-async function getLinks(rootDir) {
-	const files = await utils.getFiles(rootDir);
-	const promises = R.map(async (file) => {
+async function getLinks(rootDir, files) {
+	const promises = files.map(async (file) => {
 		const filePath = path.join(rootDir, file);
-		const matches = Array.from(
-			await getLinksFromFile(filePath)
-		);
-		const _links = matches.map(
-			(match) => {
-				const linkedFile = `${match[1]}.md`;
-				const p = path.join(
-					path.dirname(file),
-					linkedFile
-				);
-				// in the end all paths are relative to the root dir
-				return path.normalize(p);
-			}
-		);
-		const links = [];
-		const brokenLinks = [];
-		_links.forEach((l) => {
-			if (files.includes(l)) {
-				links.push(l);
-			} else {
-				brokenLinks.push(l);
-			}
-		});
+		const fileContent = (
+			await fsPromise.readFile(filePath)
+		).toString();
+
+		const { links, brokenLinks } = getLinksFromFile(files, file, fileContent);
+
 		return {
 			file,
 			links,
 			brokenLinks,
 		};
-	})(files);
+	});
 	return Promise.all(promises);
 }
 
@@ -82,9 +88,9 @@ function addBacklinks(linkItems) {
 	// map file name to data
 	const nameToData = {};
 	linkItems.forEach((item) => {
-		nameToData[item.file] = { 
+		nameToData[item.file] = {
 			...item,
-			backLinks: [], 
+			backLinks: [],
 		};
 	});
 	// add backLinks
@@ -93,7 +99,7 @@ function addBacklinks(linkItems) {
 			if (file === other.file) { return; }
 			if (other.links.includes(file)) {
 				if (!links.includes(other.file)) {
-					nameToData[file].backLinks.push(other.file);					
+					nameToData[file].backLinks.push(other.file);
 				}
 			}
 		});
@@ -111,11 +117,14 @@ async function main() {
 	const rootDir = args[0];
 
 	// getTagsHistogram(rootDir).then(console.log);
-	let linkItems = await getLinks(rootDir);
+
+	const files = await utils.getFiles(rootDir);
+
+	let linkItems = await getLinks(rootDir, files);
 	linkItems = addBacklinks(linkItems);
 	console.log(linkItems);
 
-	// prep visualization data
+	// prep visualization data:
 	const links = [];
 	const missing = R.pipe(
 		R.map(R.prop('brokenLinks')),
@@ -140,7 +149,7 @@ async function main() {
 		});
 	});
 	fs.writeFileSync(
-		'./web/data.json', 
+		'./web/data.json',
 		JSON.stringify({ nodes, links }, null, '\t')
 	);
 }
