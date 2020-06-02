@@ -15,32 +15,42 @@ serve -o ./web
         - [x] inter-document links
         - [ ] documents themselves
 - flat file wiki:
-    - links
-    - backlinks
-    - tagging, tag management
+    - [x] links
+    - [x] backlinks
+    - [x] find broken links
+    - [tags](https://github.com/freder/md/issues/3)
     - [x] frontmatter
+    - refactoring:
+        - [updating links, when file gets renamed](https://github.com/freder/md/issues/2)
+        - rename / replace tags
     - visualization
         - [x] graph
-        - [ ] make nodes 'pinnable' (to be able to mix manual and automatic layout)
-    - versioning (using git)
+        - [ ] [make nodes 'pinnable' (to be able to mix manual and automatic layout)](https://github.com/freder/md/issues/2)
+        - highlight node's edges on hover
+        - show subset of graph
+            - "radius" filter tool: use scrollwheel to adjust the number of max. "hops" from the central node
+    - versioning (using git): either automatic or manually
 - todo lists:
     - implement an existing notation?
         - research state of the art
+            - https://www.taskpaper.com/
+            - https://margin.love/#/
+            - https://jtree.treenotation.org/designer/
     - expressing dependencies
     - graphical representation
 - vscode plugin
     - wiki
         - graph view
+        - editor
+            - navigating links
+            - link preview
         - side bar:
             - tags list
-            - backlinks
+            - backlinks (with context)
         - commands:
             - (fuzzy) insert tag
             - insert links (with autocomplete)
-        - refactoring tools:
-            - updating links, when file gets renamed
-            - extracting section of a file to new file, and inserting a link to new file
-            - rename / replace tags
             - refactor directory structure (s.th. like `dired`)
+            - extracting section of a file to new file, and inserting a link to new file
     - todo lists
         - custom "perspectives" (filtered views)
