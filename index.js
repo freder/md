@@ -71,7 +71,7 @@ function getFrontmatterFromFile(fileContent) {
 }
 
 
-async function getLinks(rootDir, files) {
+async function getFilesData(rootDir, files) {
 	const promises = files.map(async (file) => {
 		const filePath = path.join(rootDir, file);
 		const fileContent = (
@@ -128,9 +128,9 @@ async function main() {
 
 	const files = await utils.getFiles(rootDir);
 
-	let linkItems = await getLinks(rootDir, files);
-	linkItems = addBacklinks(linkItems);
-	console.log(linkItems);
+	let fileItems = await getFilesData(rootDir, files);
+	fileItems = addBacklinks(fileItems);
+	console.log(fileItems);
 
 	// prep visualization data:
 	const links = [];
@@ -139,9 +139,9 @@ async function main() {
 		R.unnest,
 		R.uniq,
 		R.map((id) => ({ id, isMissing: true })),
-	)(linkItems);
+	)(fileItems);
 	const nodes = [...missing]
-	linkItems.forEach((item) => {
+	fileItems.forEach((item) => {
 		nodes.push({
 			...item,
 			id: item.file,
