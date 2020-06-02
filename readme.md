@@ -5,22 +5,42 @@ serve -o ./web
 
 
 ## mission
-
-- building composable tools for working with markdown files
+- building composable pieces of functionality for working with markdown files
 - enabling more advanced workflows, while dealing with flat files only
-- creating the building blocks for a vscode extension
+- tying it together in a vscode extension
 
 ## ideas
-- wiki-like:
-    - links, backlinks
+- data:
+    - represent everything as a graph
+        - [x] inter-document links
+        - [ ] documents themselves
+- flat file wiki:
+    - links
+    - backlinks
     - tagging, tag management
-    - tools for refactoring
-        - updating links, when file gets renamed
-        - extracting section of a file to new file, and inserting a link to new file
-    - possibility to embed (parts of) other files
-        - making each atomic element referenceable
+    - [x] frontmatter
+    - visualization
+        - [x] graph
+        - [ ] make nodes 'pinnable' (to be able to mix manual and automatic layout)
     - versioning (using git)
 - todo lists:
+    - implement an existing notation?
+        - research state of the art
     - expressing dependencies
-- data / API:
-    - represent everything as a graph
+    - graphical representation
+- vscode plugin
+    - wiki
+        - graph view
+        - side bar:
+            - tags list
+            - backlinks
+        - commands:
+            - (fuzzy) insert tag
+            - insert links (with autocomplete)
+        - refactoring tools:
+            - updating links, when file gets renamed
+            - extracting section of a file to new file, and inserting a link to new file
+            - rename / replace tags
+            - refactor directory structure (s.th. like `dired`)
+    - todo lists
+        - custom "perspectives" (filtered views)
