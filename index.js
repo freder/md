@@ -1,4 +1,3 @@
-const fsPromise = require('fs/promises');
 const fs = require('fs');
 const path = require('path');
 
@@ -78,17 +77,9 @@ function getFrontmatterFromFile(fileContent) {
 }
 
 
-async function getFileContent(rootDir, file) {
-	const filePath = path.join(rootDir, file);
-	return (
-		await fsPromise.readFile(filePath)
-	).toString();
-}
-
-
 async function getFilesData(rootDir, files) {
 	const promises = files.map(async (file) => {
-		const fileContent = await getFileContent(rootDir, file);
+		const fileContent = await utils.getFileContent(rootDir, file);
 
 		const frontmatter = getFrontmatterFromFile(fileContent);
 		const { links, brokenLinks } = getLinksFromFile(files, file, fileContent);
@@ -169,7 +160,7 @@ async function renameFile(rootDir, oldPath, newPath) {
 	await globallyUpdateLink(rootDir, oldPath, newPath);
 	const [files, fileContent] = await Promise.all([
 		utils.getFiles(rootDir),
-		getFileContent(rootDir, newPath),
+		utils.getFileContent(rootDir, newPath),
 	]);
 	// we need to fix the ones we broke:
 	const { /*links, */brokenLinksOriginal } = getLinksFromFile(files, newPath, fileContent);
