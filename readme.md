@@ -28,7 +28,7 @@ serve -o ./web
     - [tags](https://github.com/freder/md/issues/3)
     - [x] frontmatter
     - refactoring:
-        - [updating links, when file gets renamed](https://github.com/freder/md/issues/2)
+        - [x] [updating links, when file gets renamed](https://github.com/freder/md/issues/2)
         - rename / replace tags
     - visualization
         - [x] graph
