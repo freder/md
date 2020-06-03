@@ -1,3 +1,9 @@
+## run 
+
+- requirements:
+    - `ag`
+    - gnu `sed`
+
 ```
 node index.js ./test-data
 serve -o ./web
@@ -8,6 +14,7 @@ serve -o ./web
 - building composable pieces of functionality for working with markdown files
 - enabling more advanced workflows, while dealing with flat files only
 - tying it together in a vscode extension
+
 
 ## ideas
 - data:

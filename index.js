@@ -2,6 +2,7 @@ const fsPromise = require('fs/promises');
 const fs = require('fs');
 const path = require('path');
 
+const fse = require('fs-extra');
 const R = require('ramda');
 const matter = require('gray-matter');
 
@@ -120,11 +121,46 @@ function addBacklinks(linkItems) {
 }
 
 
+async function globallyUpdateLink(rootDir, oldPath, newPath) {
+	const a = oldPath.replace(/\.md$/i, '').replace(/\//, '\\/');
+	const b = newPath.replace(/\.md$/i, '').replace(/\//, '\\/');
+	const command = [
+		'find',
+			`"${rootDir}"`,
+			'-type f',
+			'-iname "*.md"',
+			'-exec',
+				'gsed', 
+					`--in-place "s/\\[\\[${a}/\\[\\[${b}/g"`,
+					'{}',
+					'\\;'
+	].join(' ');
+	console.log(command);
+	return utils.getExecStdout(command);
+}
+
+
+async function renameFile(rootDir, oldPath, newPath) {
+	const movePromise = fse.move(
+		path.join(rootDir, oldPath),
+		path.join(rootDir, newPath),
+		{ overwrite: true }
+	);
+	const updateLinkPromise = globallyUpdateLink(rootDir, oldPath, newPath);
+	return Promise.all([
+		movePromise,
+		updateLinkPromise
+	]);
+}
+
+
 async function main() {
 	const args = R.drop(2, process.argv);
 	const rootDir = args[0];
 
 	// getTagsHistogram(rootDir).then(console.log);
+	
+	await renameFile(rootDir, 'introduction.md', 'subdir/asdf.md');
 
 	const files = await utils.getFiles(rootDir);
 
