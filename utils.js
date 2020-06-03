@@ -53,7 +53,7 @@ module.exports.getFiles = (rootDir) => {
 				}
 				resolve(matches);
 			}
-		)
+		);
 	});
 };
 
@@ -97,7 +97,7 @@ module.exports.extractToNewFile = async (rootDir, filePath, start, end, newFileP
 	const outputFilePath = path.join(rootDir, newFilePath);
 	fse.mkdirp(
 		path.dirname(outputFilePath)
-	)
+	);
 	fs.writeFileSync(
 		outputFilePath,
 		extracted

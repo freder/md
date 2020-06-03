@@ -8,9 +8,11 @@
     "ramda": "^0.27.0"
   },
   "devDependencies": {
+    "eslint": "^7.1.0",
     "jest": "^26.0.1"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint index.js utils.js web/index.js"
   }
 }

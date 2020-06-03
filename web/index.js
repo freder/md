@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+
 fetch('data.json')
 	.then((res) => res.json())
 	.then((data) => {
@@ -11,18 +13,18 @@ fetch('data.json')
 
 		const simulation = d3.forceSimulation(nodes)
 			.force(
-				'link', 
+				'link',
 				d3.forceLink(links)
 					.id(d => d.id)
 					.distance(70)
 			)
 			.force(
-				'charge', 
+				'charge',
 				d3.forceManyBody()
 					.strength(-100)
 			)
 			.force(
-				'center', 
+				'center',
 				d3.forceCenter(width / 2, height / 2)
 			);
 
@@ -52,19 +54,19 @@ fetch('data.json')
 					.select('circle')
 						.attr('stroke', 'black')
 						.attr('stroke-width', 2);
-			}
-			
+			};
+
 			function dragged(d) {
 				d.fx = d3.event.x;
 				d.fy = d3.event.y;
 			}
-			
+
 			function dragended(d) {
 				if (!d3.event.active) {
 					simulation.alphaTarget(0);
 				}
 			}
-			
+
 			return d3.drag()
 				.on('start', dragstarted)
 				.on('drag', dragged)
@@ -91,7 +93,7 @@ fetch('data.json')
 			.attr('fill', (d) => {
 				return (d.isMissing) ? 'red' : 'blue';
 			});
-			
+
 		const labels = node.append('text')
 			.text((d) => d.id)
 			.attr('x', 10)

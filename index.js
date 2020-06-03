@@ -9,6 +9,7 @@ const utils = require('./utils.js');
 
 
 async function getTagsHistogram(rootDir) {
+	/* eslint-disable indent */
 	const command = [
 		'ag',
 			'--only-matching',
@@ -21,6 +22,7 @@ async function getTagsHistogram(rootDir) {
 				'| uniq -c',
 				'| sort --reverse', // most frequent first
 	].join(' ');
+	/* eslint-enable indent */
 
 	const parseLine = (line) => {
 		const [count, label] = line.trim().split(/[ \t]+/g);
@@ -135,6 +137,7 @@ function makeSubstitutionPattern(oldPath, newPath) {
 
 async function globallyUpdateLink(rootDir, oldPath, newPath) {
 	const substitutionPattern = makeSubstitutionPattern(oldPath, newPath);
+	/* eslint-disable indent */
 	const command = [
 		'find',
 			`"${rootDir}"`,
@@ -146,6 +149,7 @@ async function globallyUpdateLink(rootDir, oldPath, newPath) {
 					'{}',
 					'\\;'
 	].join(' ');
+	/* eslint-enable indent */
 	return utils.getExecStdout(command);
 }
 
@@ -175,11 +179,13 @@ async function renameFile(rootDir, oldPath, newPath) {
 			rel
 		);
 	});
+	/* eslint-disable indent */
 	const command = [
 		'gsed',
 			`--in-place '${substitutionPatterns.join('; ')}'`,
 			`"${fullPathNew}"`,
 	].join(' ');
+	/* eslint-enable indent */
 	return utils.getExecStdout(command);
 }
 
@@ -206,7 +212,7 @@ async function main() {
 		R.uniq,
 		R.map((id) => ({ id, isMissing: true })),
 	)(fileItems);
-	const nodes = [...missing]
+	const nodes = [...missing];
 	fileItems.forEach((item) => {
 		nodes.push({
 			...item,
