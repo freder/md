@@ -72,12 +72,17 @@ function getFrontmatterFromFile(fileContent) {
 }
 
 
+async function getFileContent(rootDir, file) {
+	const filePath = path.join(rootDir, file);
+	return (
+		await fsPromise.readFile(filePath)
+	).toString();
+}
+
+
 async function getFilesData(rootDir, files) {
 	const promises = files.map(async (file) => {
-		const filePath = path.join(rootDir, file);
-		const fileContent = (
-			await fsPromise.readFile(filePath)
-		).toString();
+		const fileContent = await getFileContent(rootDir, file);
 
 		const frontmatter = getFrontmatterFromFile(fileContent);
 		const { links, brokenLinks } = getLinksFromFile(files, file, fileContent);
@@ -122,8 +127,9 @@ function addBacklinks(linkItems) {
 
 
 async function globallyUpdateLink(rootDir, oldPath, newPath) {
-	const a = oldPath.replace(/\.md$/i, '').replace(/\//, '\\/');
-	const b = newPath.replace(/\.md$/i, '').replace(/\//, '\\/');
+	const prep = (x) => x.replace(/\.md$/i, '').replace(/\//, '\\/');
+	const a = prep(oldPath);
+	const b = prep(newPath);
 	const command = [
 		'find',
 			`"${rootDir}"`,
