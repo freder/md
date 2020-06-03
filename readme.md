@@ -1,4 +1,4 @@
-## run 
+## run
 
 - requirements:
     - `ag`
@@ -29,6 +29,7 @@ serve -o ./web
     - [x] frontmatter
     - refactoring:
         - [x] [updating links, when file gets renamed](https://github.com/freder/md/issues/2)
+        - [x] extracting section of a file to new file, and inserting a link to new file
         - rename / replace tags
     - visualization
         - [x] graph
@@ -58,6 +59,6 @@ serve -o ./web
             - (fuzzy) insert tag
             - insert links (with autocomplete)
             - refactor directory structure (s.th. like `dired`)
-            - extracting section of a file to new file, and inserting a link to new file
+            - extract selection to new file
     - todo lists
         - custom "perspectives" (filtered views)

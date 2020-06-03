@@ -15,17 +15,16 @@ describe('extractReplaceText', () => {
 
 describe('extractToNewFile', () => {
 	it('should extract to a new file', async () => {
-		const inFile = '__tests__/files/extract-to-file.txt';
-		const outFile = '__tests__/files/extracted.txt';
+		const inFile = '__tests__/files/extract-to-file.md';
+		const outFile = '__tests__/files/extracted.md';
 		fs.writeFileSync(inFile, '0123456789');
 
 		await utils.extractToNewFile(
 			'__tests__/files',
-			'extract-to-file.txt',
+			'extract-to-file.md',
 			3,
 			5,
-			'[[extracted]]',
-			'extracted.txt'
+			'extracted.md'
 		);
 		const content1 = fs.readFileSync(inFile).toString();
 		const content2 = fs.readFileSync(outFile).toString();

@@ -58,6 +58,12 @@ module.exports.getFiles = (rootDir) => {
 };
 
 
+const removeFileExt =
+module.exports.removeFileExt = (filePath) => {
+	return filePath.replace(/\.md$/i, '');
+};
+
+
 const getFileContent =
 module.exports.getFileContent = async (rootDir, file) => {
 	const filePath = path.join(rootDir, file);
@@ -79,9 +85,14 @@ module.exports.extractReplaceText = (start, end, str, replacement) => {
 
 
 const extractToNewFile =
-module.exports.extractToNewFile = async (rootDir, filePath, start, end, replacement, newFilePath) => {
+module.exports.extractToNewFile = async (rootDir, filePath, start, end, newFilePath) => {
 	const fileContent = await getFileContent(rootDir, filePath);
-	const [newContent, extracted] = extractReplaceText(start, end, fileContent, replacement);
+	const linkPath = path.relative(
+		path.dirname(filePath),
+		newFilePath
+	);
+	const link = `[[${removeFileExt(linkPath)}]]`;
+	const [newContent, extracted] = extractReplaceText(start, end, fileContent, link);
 
 	const outputFilePath = path.join(rootDir, newFilePath);
 	fse.mkdirp(

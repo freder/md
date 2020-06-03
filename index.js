@@ -124,7 +124,7 @@ function addBacklinks(linkItems) {
 
 
 function makeSubstitutionPattern(oldPath, newPath) {
-	const prep = (x) => x.replace(/\.md$/i, '')
+	const prep = (x) => utils.removeFileExt(x)
 		.replace(/\//ig, '\\/')
 		.replace(/\./ig, '\\.');
 	const a = prep(oldPath);
