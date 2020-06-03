@@ -40,29 +40,35 @@ function getLinksFromFile(files, file, fileContent) {
 	const matches = Array.from(
 		fileContent.matchAll(/\[\[(.*?)\]\]/ig)
 	);
+	const lookup = {};
 	const _links = matches.map(
 		(match) => {
-			const linkedFile = `${match[1]}.md`;
+			const m = match[1];
+			const linkedFile = `${m}.md`;
 			const p = path.join(
 				path.dirname(file),
 				linkedFile
 			);
+			lookup[p] = m;
 			// in the end all paths are relative to the root dir
 			return path.normalize(p);
 		}
 	);
 	const links = [];
 	const brokenLinks = [];
+	const brokenLinksOriginal = [];
 	_links.forEach((l) => {
 		if (files.includes(l)) {
 			links.push(l);
 		} else {
 			brokenLinks.push(l);
+			brokenLinksOriginal.push(lookup[l]);
 		}
 	});
 	return {
 		links,
 		brokenLinks,
+		brokenLinksOriginal,
 	};
 }
 
@@ -126,37 +132,64 @@ function addBacklinks(linkItems) {
 }
 
 
-async function globallyUpdateLink(rootDir, oldPath, newPath) {
-	const prep = (x) => x.replace(/\.md$/i, '').replace(/\//, '\\/');
+function makeSubstitutionPattern(oldPath, newPath) {
+	const prep = (x) => x.replace(/\.md$/i, '')
+		.replace(/\//ig, '\\/')
+		.replace(/\./ig, '\\.');
 	const a = prep(oldPath);
 	const b = prep(newPath);
+	return `s/\\[\\[${a}/\\[\\[${b}/ig`;
+}
+
+
+async function globallyUpdateLink(rootDir, oldPath, newPath) {
+	const substitutionPattern = makeSubstitutionPattern(oldPath, newPath);
 	const command = [
 		'find',
 			`"${rootDir}"`,
 			'-type f',
 			'-iname "*.md"',
 			'-exec',
-				'gsed', 
-					`--in-place "s/\\[\\[${a}/\\[\\[${b}/g"`,
+				'gsed',
+					`--in-place "${substitutionPattern}"`,
 					'{}',
 					'\\;'
 	].join(' ');
-	console.log(command);
 	return utils.getExecStdout(command);
 }
 
 
 async function renameFile(rootDir, oldPath, newPath) {
-	const movePromise = fse.move(
+	const fullPathNew = path.join(rootDir, newPath);
+	await fse.move(
 		path.join(rootDir, oldPath),
-		path.join(rootDir, newPath),
+		fullPathNew,
 		{ overwrite: true }
 	);
-	const updateLinkPromise = globallyUpdateLink(rootDir, oldPath, newPath);
-	return Promise.all([
-		movePromise,
-		updateLinkPromise
+	await globallyUpdateLink(rootDir, oldPath, newPath);
+	const [files, fileContent] = await Promise.all([
+		utils.getFiles(rootDir),
+		getFileContent(rootDir, newPath),
 	]);
+	// we need to fix the ones we broke:
+	const { /*links, */brokenLinksOriginal } = getLinksFromFile(files, newPath, fileContent);
+	const substitutionPatterns = brokenLinksOriginal.map((brokenLink) => {
+		const rel = path.relative(
+			path.dirname(newPath),
+			brokenLink,
+		);
+		console.log(rel);
+		return makeSubstitutionPattern(
+			brokenLink,
+			rel
+		);
+	});
+	const command = [
+		'gsed',
+			`--in-place '${substitutionPatterns.join('; ')}'`,
+			`"${fullPathNew}"`,
+	].join(' ');
+	return utils.getExecStdout(command);
 }
 
 
@@ -165,11 +198,10 @@ async function main() {
 	const rootDir = args[0];
 
 	// getTagsHistogram(rootDir).then(console.log);
-	
+
 	await renameFile(rootDir, 'introduction.md', 'subdir/asdf.md');
 
 	const files = await utils.getFiles(rootDir);
-
 	let fileItems = await getFilesData(rootDir, files);
 	fileItems = addBacklinks(fileItems);
 	console.log(fileItems);
