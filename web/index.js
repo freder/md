@@ -39,7 +39,7 @@ fetch('data.json')
 				.attr('stroke', '#999');
 
 		const drag = (simulation) => {
-			function dragstarted(d) {
+			const dragstarted = (d, i, list) => {
 				if (!d3.event.active) {
 					simulation
 						.alphaTarget(0.3)
@@ -47,6 +47,11 @@ fetch('data.json')
 				}
 				d.fx = d.x;
 				d.fy = d.y;
+				const target = list[i];
+				d3.select(target)
+					.select('circle')
+						.attr('stroke', 'black')
+						.attr('stroke-width', 2);
 			}
 			
 			function dragged(d) {
@@ -58,8 +63,6 @@ fetch('data.json')
 				if (!d3.event.active) {
 					simulation.alphaTarget(0);
 				}
-				d.fx = null;
-				d.fy = null;
 			}
 			
 			return d3.drag()
@@ -73,7 +76,15 @@ fetch('data.json')
 			.data(nodes)
 			.enter()
 				.append('g')
-				.call(drag(simulation));
+				.call(drag(simulation))
+				.on('click', (d) => {
+					if (d3.event.shiftKey) {
+						delete d.fx;
+						delete d.fy;
+						d3.select(d3.event.target)
+							.attr('stroke', 'none');
+					}
+				});
 
 		const circles = node.append('circle')
 			.attr('r', 5)
@@ -83,7 +94,7 @@ fetch('data.json')
 			
 		const labels = node.append('text')
 			.text((d) => d.id)
-			.attr('x', 6)
+			.attr('x', 10)
 			.attr('y', 3)
 			.attr('fill', (d) => {
 				return (d.frontmatter && d.frontmatter.public) ? 'black' : 'lightgrey';
