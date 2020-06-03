@@ -199,7 +199,8 @@ async function main() {
 
 	// getTagsHistogram(rootDir).then(console.log);
 
-	await renameFile(rootDir, 'introduction.md', 'subdir/asdf.md');
+	// TODO: write test
+	// await renameFile(rootDir, 'introduction.md', 'subdir/asdf.md');
 
 	const files = await utils.getFiles(rootDir);
 	let fileItems = await getFilesData(rootDir, files);
