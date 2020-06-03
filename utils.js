@@ -5,7 +5,7 @@ const R = require('ramda');
 const glob = require('glob');
 
 
-const asyncExec = 
+const asyncExec =
 module.exports.asyncExec = (command) => {
 	return new Promise((resolve, reject) => {
 		exec(
@@ -23,7 +23,7 @@ module.exports.asyncExec = (command) => {
 };
 
 
-const getExecStdout = 
+const getExecStdout =
 module.exports.getExecStdout = (command) => {
 	return asyncExec(command)
 		.then(({ stdout, stderr }) => {
@@ -38,7 +38,7 @@ module.exports.getExecStdout = (command) => {
 };
 
 
-const getFiles = 
+const getFiles =
 module.exports.getFiles = (rootDir) => {
 	return new Promise((resolve, reject) => {
 		glob(
@@ -52,4 +52,15 @@ module.exports.getFiles = (rootDir) => {
 			}
 		)
 	});
+};
+
+
+const extractReplaceText =
+module.exports.extractReplaceText = (start, end, str, replacement) => {
+	const [a, b] = R.splitAt(start, str);
+	const [extracted, c] = R.splitAt(end - start, b);
+	return [
+		`${a}${replacement}${c}`,
+		extracted,
+	];
 };
