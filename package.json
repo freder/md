@@ -10,9 +10,11 @@
   "devDependencies": {
     "eslint": "^7.1.0",
     "eslint-plugin-jest": "^23.13.2",
+    "express": "^4.17.1",
     "jest": "^26.0.1"
   },
   "scripts": {
+    "vis": "node server.js",
     "test": "jest",
     "lint": "eslint src __tests__"
   }

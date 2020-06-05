@@ -27,6 +27,21 @@ module.exports.moveFile = async (rootDir, oldPath, newPath) => {
 		{ overwrite: true }
 	);
 
+	// update node positions file
+	fs.readFile('src/web/positions.json', (err, buf) => {
+		if (err) { return console.error(err); }
+		const data = JSON.parse(buf.toString());
+		data[newPath] = data[oldPath];
+		delete data[oldPath];
+		fs.writeFile(
+			'src/web/positions.json',
+			JSON.stringify(data, null, '\t'),
+			(err) => {
+				if (err) { return console.error(err); }
+			}
+		);
+	});
+
 	// update links _to_ moved document
 	const files = await getFilesList(rootDir);
 	await updateLinkInFiles(rootDir, files, oldPath, newPath);
