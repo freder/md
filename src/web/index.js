@@ -1,5 +1,7 @@
 /* eslint-disable indent */
 
+const pinnedOutlineColor = 'black';
+
 const commonFetchOpts = {
 	method: 'post',
 	headers: {
@@ -30,14 +32,30 @@ const unpinNode = (id) => {
 
 fetch('data.json')
 	.then((res) => res.json())
-	.then((data) => {
+	.then(async (data) => {
 		console.log(data);
+
+		// load positions
+		let positions = {};
+		await fetch('/positions.json')
+			.then((res) => res.json())
+			.then((pos) => {
+				positions = pos;
+				console.log(pos);
+			});
 
 		const width = 600;
 		const height = width;
 
 		const links = data.links;
-		const nodes = data.nodes;
+		const nodes = data.nodes.map((node) => {
+			const xy = positions[node.id];
+			if (xy) {
+				node.fx = xy[0];
+				node.fy = xy[1];
+			}
+			return node;
+		});
 
 		const simulation = d3.forceSimulation(nodes)
 			.force(
@@ -80,8 +98,7 @@ fetch('data.json')
 				const target = list[i];
 				d3.select(target)
 					.select('circle')
-						.attr('stroke', 'black')
-						.attr('stroke-width', 2);
+						.attr('stroke', pinnedOutlineColor);
 			};
 
 			function dragged(d) {
@@ -122,6 +139,12 @@ fetch('data.json')
 			.attr('r', 5)
 			.attr('fill', (d) => {
 				return (d.isMissing) ? 'red' : 'blue';
+			})
+			.attr('stroke-width', 2)
+			.attr('stroke', (d) => {
+				return (d.fx !== undefined)
+					? pinnedOutlineColor
+					: 'none';
 			});
 
 		/*const labels =*/ node.append('text')
