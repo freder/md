@@ -6,7 +6,7 @@
 
 ```
 node src/index.js test-data
-serve -o src/web
+yarn run vis
 ```
 
 

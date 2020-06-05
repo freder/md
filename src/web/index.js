@@ -1,5 +1,33 @@
 /* eslint-disable indent */
 
+const commonFetchOpts = {
+	method: 'post',
+	headers: {
+		'Content-Type': 'application/json'
+	},
+};
+
+
+const pinNode = (id, xy) => {
+	return fetch('/pin',
+		{
+			...commonFetchOpts,
+			body: JSON.stringify({ id, xy }),
+		}
+	);
+};
+
+
+const unpinNode = (id) => {
+	return fetch('/unpin',
+		{
+			...commonFetchOpts,
+			body: JSON.stringify({ id }),
+		}
+	);
+};
+
+
 fetch('data.json')
 	.then((res) => res.json())
 	.then((data) => {
@@ -61,7 +89,8 @@ fetch('data.json')
 				d.fy = d3.event.y;
 			}
 
-			function dragended(/*d*/) {
+			function dragended(d) {
+				pinNode(d.id, [d.fx, d.fy]);
 				if (!d3.event.active) {
 					simulation.alphaTarget(0);
 				}
@@ -83,6 +112,7 @@ fetch('data.json')
 					if (d3.event.shiftKey) {
 						delete d.fx;
 						delete d.fy;
+						unpinNode(d.id);
 						d3.select(d3.event.target)
 							.attr('stroke', 'none');
 					}
