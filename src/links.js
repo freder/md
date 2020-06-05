@@ -15,35 +15,35 @@ module.exports.getLinksFromFile = (files, file, fileContent) => {
 	const matches = Array.from(
 		fileContent.matchAll(/\[\[(.*?)\]\]/ig)
 	);
-	const lookup = {};
 	const _links = matches.map(
 		(match) => {
-			const m = match[1];
-			const linkedFile = `${m}.md`;
-			const p = path.join(
-				path.dirname(file),
-				linkedFile
+			const relativeToFile = `${match[1]}.md`;
+			const relativeToRoot = path.normalize(
+				path.join(
+					path.dirname(file),
+					relativeToFile
+				)
 			);
-			lookup[p] = m;
-			// in the end all paths are relative to the root dir
-			return path.normalize(p);
+			return {
+				relativeToFile,
+				relativeToRoot,
+			};
 		}
 	);
+
 	const links = [];
 	const brokenLinks = [];
-	const brokenLinksOriginal = [];
-	_links.forEach((l) => {
-		if (files.includes(l)) {
-			links.push(l);
+	_links.forEach((link) => {
+		if (files.includes(link.relativeToRoot)) {
+			links.push(link);
 		} else {
-			brokenLinks.push(l);
-			brokenLinksOriginal.push(lookup[l]);
+			brokenLinks.push(link);
 		}
 	});
+
 	return {
 		links,
 		brokenLinks,
-		brokenLinksOriginal,
 	};
 };
 
@@ -90,23 +90,41 @@ module.exports.makeSubstitutionPattern = (oldPath, newPath) => {
 };
 
 
-// const globallyUpdateLink =
-module.exports.globallyUpdateLink = async (rootDir, oldPath, newPath) => {
-	const substitutionPattern = makeSubstitutionPattern(oldPath, newPath);
-	/* eslint-disable indent */
-	const command = [
-		'find',
-			`"${rootDir}"`,
-			'-type f',
-			'-iname "*.md"',
-			'-exec',
+// const updateLinkInFiles =
+module.exports.updateLinkInFiles = async (rootDir, files, oldPath, newPath) => {
+	const promises = (await getDocumentsData(rootDir, files))
+		// figure out which docs need to be updated:
+		.map((doc) => {
+			const links = [
+				...doc.links,
+				...doc.brokenLinks,
+			];
+			return [
+				doc,
+				links.filter(
+					(link) => link.relativeToRoot === oldPath
+				),
+			];
+		})
+		.map(([doc, links]) => {
+			if (!links.length) { return; }
+			const oldLink = links[0].relativeToFile;
+			const newLink = path.relative(
+				path.dirname(doc.file),
+				newPath
+			);
+			const substitutionPattern = makeSubstitutionPattern(oldLink, newLink);
+			const command = [
+				/* eslint-disable indent */
 				'gsed',
 					`--in-place "${substitutionPattern}"`,
-					'{}',
-					'\\;'
-	].join(' ');
-	/* eslint-enable indent */
-	return getExecStdout(command);
+					`"${path.join(rootDir, doc.file)}"`
+				/* eslint-enable indent */
+			].join(' ');
+			return getExecStdout(command);
+		});
+	await Promise.all(promises);
+};
 
 
 const getDocumentsData =

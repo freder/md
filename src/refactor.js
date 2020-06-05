@@ -11,7 +11,7 @@ const {
 	extractReplaceText,
 } = require('./utils.js');
 const {
-	globallyUpdateLink,
+	updateLinkInFiles,
 	getLinksFromFile,
 	makeSubstitutionPattern,
 } = require('./links.js');
@@ -28,31 +28,30 @@ module.exports.moveFile = async (rootDir, oldPath, newPath) => {
 	);
 
 	// update links _to_ moved document
-	await globallyUpdateLink(rootDir, oldPath, newPath);
+	const files = await getFilesList(rootDir);
+	await updateLinkInFiles(rootDir, files, oldPath, newPath);
 
 	// update links _from_ moved document
-	const [files, fileContent] = await Promise.all([
-		getFilesList(rootDir),
-		getFileContent(rootDir, newPath),
-	]);
-	const { brokenLinksOriginal } = getLinksFromFile(files, newPath, fileContent);
-	const substitutionPatterns = brokenLinksOriginal.map((brokenLink) => {
-		const rel = path.relative(
+	const fileContent = await getFileContent(rootDir, newPath);
+	const { brokenLinks } = getLinksFromFile(files, newPath, fileContent);
+	const substitutionPatterns = brokenLinks.map((brokenLink) => {
+		const oldLink = brokenLink.relativeToFile;
+		const newLink = path.relative(
 			path.dirname(newPath),
-			brokenLink,
+			oldLink,
 		);
 		return makeSubstitutionPattern(
-			brokenLink,
-			rel
+			oldLink,
+			newLink
 		);
 	});
-	/* eslint-disable indent */
 	const command = [
+		/* eslint-disable indent */
 		'gsed',
 			`--in-place '${substitutionPatterns.join('; ')}'`,
 			`"${fullPathNew}"`,
+		/* eslint-enable indent */
 	].join(' ');
-	/* eslint-enable indent */
 	return getExecStdout(command);
 };
 

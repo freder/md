@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const fse = require('fs-extra');
+
 const utils = require('../src/utils.js');
 const refactor = require('../src/refactor.js');
 
@@ -39,5 +41,50 @@ describe('extractToNewFile', () => {
 		expect(content2).toEqual('34');
 		fs.unlinkSync(inFile);
 		fs.unlinkSync(outFile);
+	});
+});
+
+
+describe('moveFile', () => {
+	it('should move the file and update links to and from it', async () => {
+		/*
+			before:
+			- a.md
+			- subdir1/c.md
+			- d.md
+		*/
+		/*
+			after:
+			- a.md
+			- subdir1/c.md
+			- subdir2/dddd.md
+		*/
+		const aPath = path.join(rootDir, 'a.md');
+		fs.writeFileSync(aPath, '[[d]]');
+
+		const cDir = path.join(rootDir, 'subdir1');
+		const cPath = path.join(cDir, 'c.md');
+		await fse.mkdirp(cDir);
+		fs.writeFileSync(cPath, '[[../d]]');
+
+		const dPath = path.join(rootDir, 'd.md');
+		fs.writeFileSync(dPath, '[[a]]\n[[b]]\n[[subdir1/c]]');
+
+		await refactor.moveFile(rootDir, 'd.md', 'subdir2/dddd.md');
+
+		let content = fs.readFileSync(aPath).toString();
+		expect(content).toEqual('[[subdir2/dddd]]');
+
+		content = fs.readFileSync(cPath).toString();
+		expect(content).toEqual('[[../subdir2/dddd]]');
+
+		content = fs.readFileSync(path.join(rootDir, 'subdir2/dddd.md')).toString();
+		expect(content).toEqual('[[../a]]\n[[../b]]\n[[../subdir1/c]]');
+
+		fs.unlinkSync(aPath);
+		fs.unlinkSync(cPath);
+		fs.unlinkSync(
+			path.join(rootDir, 'subdir2', 'dddd.md')
+		);
 	});
 });

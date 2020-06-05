@@ -24,7 +24,9 @@ async function main() {
 	const files = await getFilesList(rootDir);
 	let docs = await getDocumentsData(rootDir, files);
 	docs = withBacklinks(docs);
-	console.log(docs);
+	docs.forEach((doc) => {
+		console.log(doc);
+	});
 
 	// prep visualization data:
 	fs.writeFileSync(
