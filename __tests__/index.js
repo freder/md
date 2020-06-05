@@ -5,9 +5,21 @@ const fse = require('fs-extra');
 
 const utils = require('../src/utils.js');
 const refactor = require('../src/refactor.js');
+const tags = require('../src/tags.js');
 
 
-const rootDir = '__tests__/files';
+const rootDir = '__tests__/tmp';
+
+
+describe('getTagsHistogram', () => {
+	it('should count all tags', async () => {
+		const rootDir = '__tests__/tags';
+		const histo = await tags.getTagsHistogram(rootDir);
+		expect(histo.test).toEqual(2);
+		expect(histo.qwer).toEqual(1);
+		expect(histo.asdf).toEqual(1);
+	});
+});
 
 
 describe('extractReplaceText', () => {
