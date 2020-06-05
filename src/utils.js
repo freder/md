@@ -74,7 +74,7 @@ module.exports.getFileContent = async (rootDir, file) => {
 
 
 // const getFrontmatterFromString =
-module.exports.getFrontmatterFromString =  (str) => {
+module.exports.getFrontmatterFromString = (str) => {
 	return matter(str).data;
 };
 
