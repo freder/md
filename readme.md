@@ -30,7 +30,7 @@ serve -o src/web
     - refactoring:
         - [x] [updating links, when file gets renamed](https://github.com/freder/md/issues/2)
         - [x] extracting section of a file to new file, and inserting a link to new file
-        - rename / replace tags
+        - [x] rename / replace tags
     - visualization
         - [x] graph
         - [ ] [make nodes 'pinnable' (to be able to mix manual and automatic layout)](https://github.com/freder/md/issues/2)
