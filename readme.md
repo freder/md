@@ -1,7 +1,6 @@
 ## run
 
 - requirements:
-    - `find`
     - `ag`
     - gnu `sed`
 

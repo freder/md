@@ -25,7 +25,6 @@
 			"brokenLinks": [
 				"conclusion.md"
 			],
-			"backLinks": [],
 			"id": "index.md"
 		},
 		{
@@ -36,9 +35,6 @@
 				"dolores.md",
 				"tempore.md"
 			],
-			"backLinks": [
-				"index.md"
-			],
 			"id": "introduction.md"
 		},
 		{
@@ -48,7 +44,6 @@
 				"index.md"
 			],
 			"brokenLinks": [],
-			"backLinks": [],
 			"id": "nested/chapter-1.md"
 		},
 		{
@@ -56,7 +51,6 @@
 			"frontmatter": {},
 			"links": [],
 			"brokenLinks": [],
-			"backLinks": [],
 			"id": "orphan.md"
 		}
 	],

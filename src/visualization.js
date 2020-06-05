@@ -2,30 +2,41 @@ const R = require('ramda');
 
 
 // const prepareData =
-module.exports.prepareData = (fileItems) => {
+module.exports.prepareData = (docs) => {
 	const links = [];
 
 	// create placeholder nodes for missing documents
 	const missing = R.pipe(
 		R.map(R.prop('brokenLinks')),
 		R.unnest,
+		R.map(R.prop('relativeToRoot')),
 		R.uniq,
-		R.map((id) => ({ id, isMissing: true })),
-	)(fileItems);
+		R.map((relativeToRoot) => ({
+			id: relativeToRoot,
+			isMissing: true,
+		})),
+	)(docs);
 
 	const nodes = [...missing];
-	fileItems.forEach((item) => {
-		nodes.push({
-			...item,
+	docs.forEach((item) => {
+		const node = {
+			...R.omit(['backLinks'], item),
 			id: item.file,
-		});
+			links: item.links.map(
+				R.prop('relativeToRoot')
+			),
+			brokenLinks: item.brokenLinks.map(
+				R.prop('relativeToRoot')
+			),
+		};
+		nodes.push(node);
 		[
-			...item.links,
-			...item.brokenLinks,
-		].forEach((l) => {
+			...node.links,
+			...node.brokenLinks,
+		].forEach((link) => {
 			links.push({
-				source: item.file,
-				target: l,
+				source: node.id,
+				target: link,
 			});
 		});
 	});
