@@ -5,9 +5,43 @@ const fse = require('fs-extra');
 
 const utils = require('../src/utils.js');
 const refactor = require('../src/refactor.js');
+const tags = require('../src/tags.js');
 
 
-const rootDir = '__tests__/files';
+const rootDir = '__tests__/tmp';
+
+
+describe('getTagsHistogram', () => {
+	it('should count all tags', async () => {
+		const rootDir = '__tests__/tags';
+		const histo = await tags.getTagsHistogram(rootDir);
+		expect(histo.test).toEqual(2);
+		expect(histo.qwer).toEqual(1);
+		expect(histo.asdf).toEqual(1);
+	});
+});
+
+
+describe('replaceTags', () => {
+	it('should replace tags in frontmatter', async () => {
+		const rootDir = '__tests__/tags';
+		const aContentOrig = await utils.getFileContent(rootDir, 'a.md');
+		const bContentOrig = await utils.getFileContent(rootDir, 'b.md');
+		await tags.replaceTags(
+			rootDir,
+			{
+				asdf: 'xxxx',
+				test: ['te', 'st']
+			}
+		);
+		const aTagsLine = (await utils.getFileContent(rootDir, 'a.md')).split('\n')[1];
+		expect(aTagsLine).toEqual('tags: te, st, xxxx');
+		const bTagsLine = (await utils.getFileContent(rootDir, 'b.md')).split('\n')[1];
+		expect(bTagsLine).toEqual('tags: qwer, te, st');
+		fs.writeFileSync(path.join(rootDir, 'a.md'), aContentOrig);
+		fs.writeFileSync(path.join(rootDir, 'b.md'), bContentOrig);
+	});
+});
 
 
 describe('extractReplaceText', () => {
