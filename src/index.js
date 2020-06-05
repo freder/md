@@ -18,9 +18,6 @@ async function main() {
 
 	// tags.getTagsHistogram(rootDir).then(console.log);
 
-	// TODO: write test
-	// await moveFile(rootDir, 'introduction.md', 'subdir/asdf.md');
-
 	const files = await getFilesList(rootDir);
 	let docs = await getDocumentsData(rootDir, files);
 	docs = withBacklinks(docs);
