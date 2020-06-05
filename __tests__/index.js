@@ -1,6 +1,7 @@
 const fs = require('fs');
 
-const utils = require('../utils.js');
+const utils = require('../src/utils.js');
+const refactor = require('../src/refactor.js');
 
 
 describe('extractReplaceText', () => {
@@ -19,7 +20,7 @@ describe('extractToNewFile', () => {
 		const outFile = '__tests__/files/extracted.md';
 		fs.writeFileSync(inFile, '0123456789');
 
-		await utils.extractToNewFile(
+		await refactor.extractToNewFile(
 			'__tests__/files',
 			'extract-to-file.md',
 			3,

@@ -61,7 +61,7 @@ fetch('data.json')
 				d.fy = d3.event.y;
 			}
 
-			function dragended(d) {
+			function dragended(/*d*/) {
 				if (!d3.event.active) {
 					simulation.alphaTarget(0);
 				}
@@ -88,13 +88,13 @@ fetch('data.json')
 					}
 				});
 
-		const circles = node.append('circle')
+		/*const circles =*/ node.append('circle')
 			.attr('r', 5)
 			.attr('fill', (d) => {
 				return (d.isMissing) ? 'red' : 'blue';
 			});
 
-		const labels = node.append('text')
+		/*const labels =*/ node.append('text')
 			.text((d) => d.id)
 			.attr('x', 10)
 			.attr('y', 3)

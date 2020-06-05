@@ -1,11 +1,10 @@
 const { exec } = require('child_process');
 const path = require('path');
-const fs = require('fs');
 const fsPromise = require('fs/promises');
 
 const R = require('ramda');
 const glob = require('glob');
-const fse = require('fs-extra');
+const matter = require('gray-matter');
 
 
 const asyncExec =
@@ -26,10 +25,10 @@ module.exports.asyncExec = (command) => {
 };
 
 
-const getExecStdout =
+// const getExecStdout =
 module.exports.getExecStdout = (command) => {
 	return asyncExec(command)
-		.then(({ stdout, stderr }) => {
+		.then(({ stdout/*, stderr*/ }) => {
 			const lines = stdout.split(/[\r\n]/g)
 				.map((line) => {
 					const l = `${line}`.trim();
@@ -41,9 +40,10 @@ module.exports.getExecStdout = (command) => {
 };
 
 
-const getFiles =
-module.exports.getFiles = (rootDir) => {
+// const getFilesList =
+module.exports.getFilesList = (rootDir) => {
 	return new Promise((resolve, reject) => {
+		// TODO: use `find` instead?
 		glob(
 			path.join('**', '*.md'),
 			{ cwd: rootDir },
@@ -58,13 +58,13 @@ module.exports.getFiles = (rootDir) => {
 };
 
 
-const removeFileExt =
+// const removeFileExt =
 module.exports.removeFileExt = (filePath) => {
 	return filePath.replace(/\.md$/i, '');
 };
 
 
-const getFileContent =
+// const getFileContent =
 module.exports.getFileContent = async (rootDir, file) => {
 	const filePath = path.join(rootDir, file);
 	return (
@@ -73,7 +73,13 @@ module.exports.getFileContent = async (rootDir, file) => {
 };
 
 
-const extractReplaceText =
+// const getFrontmatterFromString =
+module.exports.getFrontmatterFromString =  (str) => {
+	return matter(str).data;
+};
+
+
+// const extractReplaceText =
 module.exports.extractReplaceText = (start, end, str, replacement) => {
 	const [a, b] = R.splitAt(start, str);
 	const [extracted, c] = R.splitAt(end - start, b);
@@ -84,27 +90,4 @@ module.exports.extractReplaceText = (start, end, str, replacement) => {
 };
 
 
-const extractToNewFile =
-module.exports.extractToNewFile = async (rootDir, filePath, start, end, newFilePath) => {
-	const fileContent = await getFileContent(rootDir, filePath);
-	const linkPath = path.relative(
-		path.dirname(filePath),
-		newFilePath
-	);
-	const link = `[[${removeFileExt(linkPath)}]]`;
-	const [newContent, extracted] = extractReplaceText(start, end, fileContent, link);
 
-	const outputFilePath = path.join(rootDir, newFilePath);
-	fse.mkdirp(
-		path.dirname(outputFilePath)
-	);
-	fs.writeFileSync(
-		outputFilePath,
-		extracted
-	);
-
-	fs.writeFileSync(
-		path.join(rootDir, filePath),
-		newContent
-	);
-};
