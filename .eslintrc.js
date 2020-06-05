@@ -2,9 +2,14 @@ module.exports = {
 	'env': {
 		'browser': true,
 		'commonjs': true,
-		'es6': true
+		'es6': true,
+		'jest/globals': true,
 	},
-	'extends': 'eslint:recommended',
+	plugins: ['jest'],
+	'extends': [
+		'eslint:recommended',
+		'plugin:jest/recommended',
+	],
 	'globals': {
 		'Atomics': 'readonly',
 		'SharedArrayBuffer': 'readonly',
