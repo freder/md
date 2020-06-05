@@ -2,34 +2,14 @@ const fs = require('fs');
 
 const R = require('ramda');
 
+const { getFilesList } = require('./utils.js');
 const {
-	getFilesList,
-	getFileContent,
-	getFrontmatterFromString,
-} = require('./utils.js');
-const {
-	getLinksFromFile,
+	getDocumentsData,
 	withBacklinks,
 } = require('./links.js');
 // const tags = require('./tags.js');
 // const refactor = require('./refactor.js');
 const vis = require('./visualization.js');
-
-
-async function getDocumentsData(rootDir, files) {
-	const promises = files.map(async (file) => {
-		const fileContent = await getFileContent(rootDir, file);
-		const frontmatter = getFrontmatterFromString(fileContent);
-		const { links, brokenLinks } = getLinksFromFile(files, file, fileContent);
-		return {
-			file,
-			frontmatter,
-			links,
-			brokenLinks,
-		};
-	});
-	return Promise.all(promises);
-}
 
 
 async function main() {
@@ -42,14 +22,14 @@ async function main() {
 	// await moveFile(rootDir, 'introduction.md', 'subdir/asdf.md');
 
 	const files = await getFilesList(rootDir);
-	let fileItems = await getDocumentsData(rootDir, files);
-	fileItems = withBacklinks(fileItems);
-	console.log(fileItems);
+	let docs = await getDocumentsData(rootDir, files);
+	docs = withBacklinks(docs);
+	console.log(docs);
 
 	// prep visualization data:
 	fs.writeFileSync(
 		'src/web/data.json',
-		JSON.stringify(vis.prepareData(fileItems), null, '\t')
+		JSON.stringify(vis.prepareData(docs), null, '\t')
 	);
 }
 

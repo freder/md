@@ -88,6 +88,3 @@ module.exports.extractReplaceText = (start, end, str, replacement) => {
 		extracted,
 	];
 };
-
-
-

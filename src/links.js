@@ -5,10 +5,12 @@ const R = require('ramda');
 const {
 	removeFileExt,
 	getExecStdout,
+	getFileContent,
+	getFrontmatterFromString,
 } = require('./utils.js');
 
 
-// const getLinksFromFile =
+const getLinksFromFile =
 module.exports.getLinksFromFile = (files, file, fileContent) => {
 	const matches = Array.from(
 		fileContent.matchAll(/\[\[(.*?)\]\]/ig)
@@ -105,4 +107,20 @@ module.exports.globallyUpdateLink = async (rootDir, oldPath, newPath) => {
 	].join(' ');
 	/* eslint-enable indent */
 	return getExecStdout(command);
+
+
+const getDocumentsData =
+module.exports.getDocumentsData = (rootDir, files) => {
+	const promises = files.map(async (file) => {
+		const fileContent = await getFileContent(rootDir, file);
+		const frontmatter = getFrontmatterFromString(fileContent);
+		const { links, brokenLinks } = getLinksFromFile(files, file, fileContent);
+		return {
+			file,
+			frontmatter,
+			links,
+			brokenLinks,
+		};
+	});
+	return Promise.all(promises);
 };
