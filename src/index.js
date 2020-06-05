@@ -229,7 +229,7 @@ async function main() {
 		});
 	});
 	fs.writeFileSync(
-		'./web/data.json',
+		'.src/web/data.json',
 		JSON.stringify({ nodes, links }, null, '\t')
 	);
 }

@@ -13,6 +13,6 @@
   },
   "scripts": {
     "test": "jest",
-    "lint": "eslint index.js utils.js web/index.js"
+    "lint": "eslint src"
   }
 }

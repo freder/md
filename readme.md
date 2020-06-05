@@ -1,12 +1,13 @@
 ## run
 
 - requirements:
+    - `find`
     - `ag`
     - gnu `sed`
 
 ```
-node index.js ./test-data
-serve -o ./web
+node src/index.js test-data
+serve -o src/web
 ```
 
 
