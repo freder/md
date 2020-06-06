@@ -17,6 +17,23 @@ const {
 } = require('./links.js');
 
 
+const makeNewLink =
+module.exports.makeNewLink = (oldLink, oldPath, newPath) => {
+	return path.join(
+		path.relative(
+			path.dirname(newPath),
+			path.dirname(
+				path.join(
+					path.dirname(oldPath),
+					oldLink
+				)
+			),
+		),
+		path.basename(oldLink)
+	);
+};
+
+
 const moveFile =
 module.exports.moveFile = async (rootDir, oldPath, newPath) => {
 	// move / rename file
@@ -51,22 +68,8 @@ module.exports.moveFile = async (rootDir, oldPath, newPath) => {
 	const { brokenLinks } = getLinksFromFile(files, newPath, fileContent);
 	const substitutionPatterns = brokenLinks.map((brokenLink) => {
 		const oldLink = brokenLink.relativeToFile;
-		const newLink = path.join(
-			path.relative(
-				path.dirname(newPath),
-				path.dirname(
-					path.join(
-						path.dirname(oldPath),
-						oldLink
-					)
-				),
-			),
-			path.basename(oldLink)
-		);
-		return makeSubstitutionPattern(
-			oldLink,
-			newLink
-		);
+		const newLink = makeNewLink(oldLink, oldPath, newPath);
+		return makeSubstitutionPattern(oldLink, newLink);
 	});
 	const command = [
 		/* eslint-disable indent */
