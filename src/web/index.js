@@ -79,12 +79,26 @@ fetch('data.json')
 			.attr('height', height)
 			.attr('viewBox', [0, 0, width, height]);
 
+		const defs = svg.append('defs');
+		defs.append('marker')
+			.attr('id', 'arrow')
+			.attr('viewBox', '0 -5 10 10')
+			.attr('refX', 15)
+			.attr('refY', 0)
+			.attr('markerWidth', 6)
+			.attr('markerHeight', 6)
+			.attr('orient', 'auto')
+			.append('path')
+				.attr('d', 'M0,-5L10,0L0,5')
+				.attr('fill', 'black');
+
 		const link = svg.append('g')
 			.selectAll('line')
 			.data(links)
 			.enter()
 				.append('line')
-				.attr('stroke', '#999');
+				.attr('stroke', '#999')
+				.attr('marker-end', 'url(#arrow)');
 
 		const drag = (simulation) => {
 			const dragstarted = (d, i, list) => {
