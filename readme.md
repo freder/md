@@ -37,6 +37,7 @@ yarn run vis
     - visualization
         - [x] basic graph visualiztion
         - [x] make nodes 'pinnable' (to be able to mix manual and automatic layout)
+        - [x] zoom / pan
     - versioning (using git): either automatic or manually
 - todo lists:
     - implement an existing notation?

@@ -45,8 +45,10 @@ fetch('data.json')
 				console.log(pos);
 			});
 
-		const width = 600;
-		const height = width;
+		const svgElem = document.querySelector('svg');
+		const width = svgElem.clientWidth;
+		const height = svgElem.clientHeight;
+		console.log(width, height);
 
 		const links = data.links;
 		const nodes = data.nodes.map((node) => {
