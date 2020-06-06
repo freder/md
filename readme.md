@@ -26,15 +26,17 @@ yarn run vis
     - [x] backlinks
     - [x] find broken links
     - [tags](https://github.com/freder/md/issues/3)
+	    - [x] file-level (frontmatter)
+	    - [ ] per section
     - [x] frontmatter
     - refactoring:
-        - [x] [updating links, when file gets renamed](https://github.com/freder/md/issues/2)
+        - [x] updating links, when file gets renamed
         - [x] updating links, when directory gets renamed / moved
         - [x] extracting section of a file to new file, and inserting a link to new file
-        - [x] rename / replace tags
+        - [x] rename / replace (frontmatter) tags
     - visualization
-        - [x] graph
-        - [x] [make nodes 'pinnable' (to be able to mix manual and automatic layout)](https://github.com/freder/md/issues/2)
+        - [x] basic graph visualiztion
+        - [x] make nodes 'pinnable' (to be able to mix manual and automatic layout)
     - versioning (using git): either automatic or manually
 - todo lists:
     - implement an existing notation?
