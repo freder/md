@@ -79,8 +79,8 @@ describe('extractToNewFile', () => {
 });
 
 
-describe('moveFile', () => {
-	it('should move the file and update links to and from it', async () => {
+describe('moveFile, moveDirectory', () => {
+	it('should move files and update links to and from them', async () => {
 		/*
 			before:
 			- a.md
@@ -115,10 +115,20 @@ describe('moveFile', () => {
 		content = fs.readFileSync(path.join(rootDir, 'subdir2/dddd.md')).toString();
 		expect(content).toEqual('[[../a]]\n[[../b]]\n[[../subdir1/c]]');
 
+		// also test moving directory:
+		await refactor.moveDirectory(rootDir, 'subdir2', 'subdir2/moved');
+
+		content = fs.readFileSync(aPath).toString();
+		expect(content).toEqual('[[subdir2/moved/dddd]]');
+
+		content = fs.readFileSync(path.join(rootDir, 'subdir2/moved/dddd.md')).toString();
+		expect(content).toEqual('[[../../a]]\n[[../../b]]\n[[../../subdir1/c]]');
+
+		// clean up:
 		fs.unlinkSync(aPath);
 		fs.unlinkSync(cPath);
 		fs.unlinkSync(
-			path.join(rootDir, 'subdir2', 'dddd.md')
+			path.join(rootDir, 'subdir2/moved', 'dddd.md')
 		);
 	});
 });

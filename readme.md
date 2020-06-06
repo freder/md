@@ -29,6 +29,7 @@ yarn run vis
     - [x] frontmatter
     - refactoring:
         - [x] [updating links, when file gets renamed](https://github.com/freder/md/issues/2)
+        - [x] updating links, when directory gets renamed / moved
         - [x] extracting section of a file to new file, and inserting a link to new file
         - [x] rename / replace tags
     - visualization
