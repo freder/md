@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 
 const pinnedOutlineColor = 'black';
+const edgeColor = '#999';
 
 const commonFetchOpts = {
 	method: 'post',
@@ -90,7 +91,7 @@ fetch('data.json')
 			.attr('orient', 'auto')
 			.append('path')
 				.attr('d', 'M0,-5L10,0L0,5')
-				.attr('fill', 'black');
+				.attr('fill', edgeColor);
 
 		const everythingGroup = svg.append('g')
 			.attr('class', 'everything');
@@ -106,7 +107,7 @@ fetch('data.json')
 			.data(links)
 			.enter()
 				.append('line')
-				.attr('stroke', '#999')
+				.attr('stroke', edgeColor)
 				.attr('marker-end', 'url(#arrow)');
 
 		const drag = (simulation) => {
