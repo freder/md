@@ -92,7 +92,16 @@ fetch('data.json')
 				.attr('d', 'M0,-5L10,0L0,5')
 				.attr('fill', 'black');
 
-		const link = svg.append('g')
+		const everythingGroup = svg.append('g')
+			.attr('class', 'everything');
+
+		const zoomHandler = d3.zoom()
+			.on('zoom', () => {
+				everythingGroup.attr('transform', d3.event.transform);
+			});
+		zoomHandler(svg);
+
+		const link = everythingGroup.append('g')
 			.selectAll('line')
 			.data(links)
 			.enter()
@@ -133,7 +142,7 @@ fetch('data.json')
 				.on('end', dragended);
 		};
 
-		const node = svg.append('g')
+		const node = everythingGroup.append('g')
 			.selectAll('g')
 			.data(nodes)
 			.enter()
