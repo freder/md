@@ -6,24 +6,16 @@ const edgeColor = '#999';
 const labelColor = 'black';
 
 
-fetch('/data.json')
-	.then((res) => res.json())
-	.then(async (data) => {
+Promise.all([
+	fetch('/data.json').then((res) => res.json()),
+	fetch('/positions.json').then((res) => res.json()),
+])
+	.then(([data, positions]) => {
 		console.log(data);
-
-		// load positions
-		let positions = {};
-		await fetch('/positions.json')
-			.then((res) => res.json())
-			.then((pos) => {
-				positions = pos;
-				console.log(pos);
-			});
 
 		const svgElem = document.querySelector('svg');
 		const width = svgElem.clientWidth;
 		const height = svgElem.clientHeight;
-		console.log(width, height);
 
 		const links = data.links;
 		const nodes = data.nodes.map((node) => {
