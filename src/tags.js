@@ -77,6 +77,25 @@ module.exports.getTagsHistogram = async (rootDir) => {
 };
 
 
+// const getFilesWithTags =
+module.exports.getFilesWithTags = async (rootDir, tagsList) => {
+	const files = await getFilesList(rootDir);
+	const docs = await getDocumentsData(rootDir, files);
+	return R.pipe(
+		R.map((doc) => {
+			const tags = frontmatterGetTags(doc.frontmatter);
+			return { tags, file: doc.file };
+		}),
+		R.filter(({ tags }) => {
+			return R.all(
+				R.includes(R.__, tags)
+			)(tagsList);
+		}),
+		R.map(R.prop('file'))
+	)(docs);
+};
+
+
 // const replaceTags =
 module.exports.replaceTags = async (rootDir, replacementMap) => {
 	/*{

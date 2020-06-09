@@ -39,6 +39,7 @@ yarn run vis
         - [x] make nodes 'pinnable' (to be able to mix manual and automatic layout)
         - [x] zoom / pan
     - versioning (using git): either automatic or manually
+    - static site generator?
 - todo lists:
     - implement an existing notation?
         - research state of the art

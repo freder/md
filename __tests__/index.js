@@ -22,6 +22,19 @@ describe('getTagsHistogram', () => {
 });
 
 
+describe('getFilesWithTags', () => {
+	it('should return a list of files with the specified tags', async () => {
+		const rootDir = '__tests__/tags';
+		const files = await tags.getFilesWithTags(
+			rootDir,
+			['test', 'asdf']
+		);
+		expect(files).toHaveLength(1);
+		expect(files[0]).toEqual('a.md');
+	});
+});
+
+
 describe('replaceTags', () => {
 	it('should replace tags in frontmatter', async () => {
 		const rootDir = '__tests__/tags';
