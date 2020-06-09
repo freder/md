@@ -3,6 +3,7 @@
 
 const pinnedOutlineColor = 'black';
 const edgeColor = '#999';
+const labelColor = 'black';
 
 
 fetch('/data.json')
@@ -152,7 +153,8 @@ fetch('/data.json')
 			.attr('x', 10)
 			.attr('y', 3)
 			.attr('fill', (d) => {
-				return (d.frontmatter && d.frontmatter.public) ? 'black' : 'lightgrey';
+				// return (d.frontmatter && d.frontmatter.public) ? 'black' : 'lightgrey';
+				return labelColor;
 			});
 
 		simulation.on('tick', () => {
