@@ -70,6 +70,12 @@ Promise.all([
 		const zoomHandler = d3.zoom()
 			.on('zoom', () => {
 				everythingGroup.attr('transform', d3.event.transform);
+			})
+			.on('start', () => {
+				svgElem.style.cursor = 'grabbing';
+			})
+			.on('end', () => {
+				svgElem.style.cursor = 'grab';
 			});
 		zoomHandler(svg);
 
@@ -99,6 +105,7 @@ Promise.all([
 			function dragged(d) {
 				d.fx = d3.event.x;
 				d.fy = d3.event.y;
+				svgElem.style.cursor = 'move';
 			}
 
 			function dragended(d) {
@@ -106,6 +113,7 @@ Promise.all([
 				if (!d3.event.active) {
 					simulation.alphaTarget(0);
 				}
+				svgElem.style.cursor = 'grab';
 			}
 
 			return d3.drag()
@@ -151,6 +159,13 @@ Promise.all([
 			.attr('fill', (d) => {
 				// return (d.frontmatter && d.frontmatter.public) ? 'black' : 'lightgrey';
 				return labelColor;
+			})
+			.on('mousedown', (d) => {
+				// prevent dragging
+				d3.event.stopPropagation();
+			})
+			.on('click', (d) => {
+				console.log(d);
 			});
 
 		simulation.on('tick', () => {
