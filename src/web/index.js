@@ -1,6 +1,8 @@
 /* global pinNode, unpinNode */
 /* eslint-disable indent */
 
+const nodeColorNormal = 'blue';
+const nodeColorMissing = 'red';
 const pinnedOutlineColor = 'black';
 const edgeColor = '#999';
 const labelColor = 'black';
@@ -131,7 +133,9 @@ Promise.all([
 		/*const circles =*/ node.append('circle')
 			.attr('r', 5)
 			.attr('fill', (d) => {
-				return (d.isMissing) ? 'red' : 'blue';
+				return (d.isMissing)
+					? nodeColorMissing
+					: nodeColorNormal;
 			})
 			.attr('stroke-width', 2)
 			.attr('stroke', (d) => {
@@ -158,7 +162,7 @@ Promise.all([
 
 			node
 				.attr('transform', (d) => {
-					return 'translate(' + d.x + ',' + d.y + ')';
+					return `translate(${d.x}, ${d.y})`;
 				});
 		});
 	});
