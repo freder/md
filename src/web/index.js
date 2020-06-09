@@ -1,37 +1,11 @@
+/* global pinNode, unpinNode */
 /* eslint-disable indent */
 
 const pinnedOutlineColor = 'black';
 const edgeColor = '#999';
 
-const commonFetchOpts = {
-	method: 'post',
-	headers: {
-		'Content-Type': 'application/json'
-	},
-};
 
-
-const pinNode = (id, xy) => {
-	return fetch('/pin',
-		{
-			...commonFetchOpts,
-			body: JSON.stringify({ id, xy }),
-		}
-	);
-};
-
-
-const unpinNode = (id) => {
-	return fetch('/unpin',
-		{
-			...commonFetchOpts,
-			body: JSON.stringify({ id }),
-		}
-	);
-};
-
-
-fetch('data.json')
+fetch('/data.json')
 	.then((res) => res.json())
 	.then(async (data) => {
 		console.log(data);
